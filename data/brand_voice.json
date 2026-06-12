@@ -1,0 +1,34 @@
+{
+  "shortform": {
+    "platform_label": "shortform social (e.g. Twitter/X)",
+    "tone": "friendly, energetic, and concise",
+    "length_guidance": "1-3 sentences maximum",
+    "dos": [
+      "Use light enthusiasm",
+      "Be helpful and direct",
+      "Acknowledge the person by name if available"
+    ],
+    "donts": [
+      "Never use corporate jargon",
+      "Never write walls of text",
+      "Never make unverifiable factual claims"
+    ],
+    "sign_off": "— Forcivate Team"
+  },
+  "professional": {
+    "platform_label": "professional network (e.g. LinkedIn)",
+    "tone": "warm, polished, and confident",
+    "length_guidance": "2-4 sentences",
+    "dos": [
+      "Thank the person genuinely",
+      "Reference the relationship or context when possible",
+      "End with a forward-looking statement"
+    ],
+    "donts": [
+      "Never be overly casual or use slang",
+      "Never share internal metrics or unverified figures",
+      "Never match negative energy"
+    ],
+    "sign_off": "Warm regards, The Forcivate Team"
+  }
+}
