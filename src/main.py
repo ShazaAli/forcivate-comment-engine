@@ -88,8 +88,17 @@ def run_ingest(posts: list, voice_configs: dict, drafter, auto_approve: bool) ->
             author = comment["author"]
             comment_text = comment["text"]
 
-            print(f"\n  → Comment [{comment_id}] by {author}")
-            print(f"    \"{comment_text[:60]}...\"" if len(comment_text) > 60 else f"    \"{comment_text}\"")
+# Skip  comments already processed in a previous run.
+            # Why check by comment_id?
+            # If the user runs the pipeline twice (e.g. after a crash), we must
+            # not re-queue the same comment — it would appear multiple times in
+            # the review queue and potentially get published twice.
+            existing_ids = {item["comment_id"] for item in queue_store.load_queue()}
+            if comment_id in existing_ids:
+                print(f"\n  → Comment [{comment_id}] — already processed, skipping.")
+                continue
+
+            print(f"\n  → Comment [{comment_id}] by {author}")            print(f"    \"{comment_text[:60]}...\"" if len(comment_text) > 60 else f"    \"{comment_text}\"")
 
             # --- STAGE 1a: TRIAGE ---
             # Triage runs first, before safety and before the LLM drafter.
