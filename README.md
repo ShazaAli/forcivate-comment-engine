@@ -45,11 +45,11 @@ comments.json
 
 ### 1. Python pipeline
 
-\`\`\`bash
+```bash
 python -m venv venv
 venv\Scripts\activate        # Mac/Linux: source venv/bin/activate
 pip install anthropic
-\`\`\`
+```
 
 Optional — real LLM drafts and triage:
 \`\`\`bash
