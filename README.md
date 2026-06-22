@@ -5,55 +5,35 @@ A full-stack comment moderation system: a Python pipeline drafts AI-powered repl
 ---
 
 ## Architecture
+
+```
 comments.json
-
-|
-
-v
-
+     |
+     v
 [Python: Triage]              <- reply / skip / monitor classification
-
-|
-
-v
-
+     |
+     v
 [Python: Safety Gate]         <- blocks spam, strips injections, flags hostile
-
-|
-
-v
-
+     |
+     v
 [Python: Drafter]             <- brand voice config + few-shot examples -> LLM call
-
-|
-
-v
-
+     |
+     v
 [Python: Risk-Tiered Queue]   <- auto-approves low-risk items, queues the rest
-
-|
-
-v
-
+     |
+     v
 [Node/Express API]  --------------------------+
-
-|                                          |
-
-v                                          v
-
+     |                                          |
+     v                                          v
 [SQLite: review_items, publish_log,    [React Dashboard]
+ learning_examples]                      approve / edit / reject
+     |                                          |
+     +---------------- decisions ---------------+
+                          |
+                          v
+                  [Mock Publish + Learning Examples]
+```
 
-learning_examples]                      approve / edit / reject
-
-|                                          |
-
-+---------------- decisions ---------------+
-
-|
-
-v
-
-[Mock Publish + Learning Examples]
 **Three clear layers, three responsibilities:**
 - **Python** — AI orchestration: triage, safety gate, brand-voice drafting.
 - **Node + Express + SQLite** — persistence and a REST API over the review queue.
@@ -65,55 +45,55 @@ v
 
 ### 1. Python pipeline
 
-```bash
+\`\`\`bash
 python -m venv venv
 venv\Scripts\activate        # Mac/Linux: source venv/bin/activate
 pip install anthropic
-```
+\`\`\`
 
 Optional — real LLM drafts and triage:
-```bash
+\`\`\`bash
 set ANTHROPIC_API_KEY=sk-ant-...     # Windows CMD
 $env:ANTHROPIC_API_KEY="sk-ant-..."  # PowerShell
-```
+\`\`\`
 If no key is set, the system uses `MockDrafter` and a rule-based mock triage automatically — every feature still works.
 
 ### 2. Backend (Node + Express + SQLite)
 
-```bash
+\`\`\`bash
 cd backend
 npm install
-```
+\`\`\`
 
 ### 3. Frontend (React + TypeScript)
 
-```bash
+\`\`\`bash
 cd frontend
 npm install
-```
+\`\`\`
 
 ---
 
 ## Run
 
 **1. Run the Python pipeline** to ingest fixture comments and populate the queue:
-```bash
+\`\`\`bash
 python -m src.main
-```
+\`\`\`
 This runs triage, the safety gate, and drafting, then opens the CLI human review loop. Low-risk comments (triage=reply + safety=ok) are auto-approved and published without review.
 
 **2. Start the backend API:**
-```bash
+\`\`\`bash
 cd backend
 npx ts-node src/server.ts
-```
+\`\`\`
 Runs at `http://localhost:3001`. On first boot it creates `data.sqlite` and applies the schema automatically.
 
 **3. Start the frontend dashboard:**
-```bash
+\`\`\`bash
 cd frontend
 npm run dev
-```
+\`\`\`
 Open the printed local URL (e.g. `http://localhost:5173`) to approve, edit, or reject queued items through the web UI — the same queue the Python CLI populates.
 
 ---
@@ -146,18 +126,32 @@ Open the printed local URL (e.g. `http://localhost:5173`) to approve, edit, or r
 ---
 
 ## Project Structure
+
+```
 forcivate-comment-engine/
-
 |-- data/                      <- Python fixture data + JSON outputs (gitignored)
-
 |   |-- comments.json
-
-|   -- brand_voice.json |-- src/                       <- Python AI pipeline |   |-- triage.py |   |-- safety_gate.py |   |-- drafter.py |   |-- queue_store.py |   -- main.py
-
+|   `-- brand_voice.json
+|-- src/                       <- Python AI pipeline
+|   |-- triage.py
+|   |-- safety_gate.py
+|   |-- drafter.py
+|   |-- queue_store.py
+|   `-- main.py
 |-- backend/                   <- Node + Express + SQLite API
+|   `-- src/
+|       |-- db/
+|       |   |-- schema.sql
+|       |   |-- connection.ts
+|       |   `-- queueRepository.ts
+|       `-- server.ts
+|-- frontend/                  <- React + TypeScript dashboard
+|   `-- src/
+|       `-- App.tsx
+|-- requirements.txt
+|-- .gitignore
+`-- README.md
+```
 
-|   -- src/ |       |-- db/ |       |   |-- schema.sql |       |   |-- connection.ts |       |   -- queueRepository.ts
+---
 
-|       -- server.ts |-- frontend/                  <- React + TypeScript dashboard |   -- src/
-
-|       -- App.tsx |-- requirements.txt |-- .gitignore -- README.md
