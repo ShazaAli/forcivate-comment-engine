@@ -50,7 +50,12 @@ export default function App() {
       }
       const data = await response.json();
       // Safely access the 'value' array payload sent by the Express API layer
-      setQueue(data.value || []);
+      // The API returns the queue as a plain JSON array (see server.ts:
+      // res.json(items)) — not wrapped in an envelope object. Earlier testing
+      // via PowerShell's Invoke-RestMethod | ConvertTo-Json made it look like
+      // a { value: [...], Count: N } shape, but that wrapping is added by
+      // PowerShell's own JSON formatting, not by the API itself.
+      setQueue(Array.isArray(data) ? data : []);
     } catch (err: any) {
       console.error("Queue fetch failed:", err);
       setError(err.message || "Unable to sync with the backend review API server.");
