@@ -45,55 +45,55 @@ comments.json
 
 ### 1. Python pipeline
 
-```bash
+\`\`\`bash
 python -m venv venv
 venv\Scripts\activate        # Mac/Linux: source venv/bin/activate
 pip install anthropic
-```
+\`\`\`
 
 Optional — real LLM drafts and triage:
-```bash
+\`\`\`bash
 set ANTHROPIC_API_KEY=sk-ant-...     # Windows CMD
 $env:ANTHROPIC_API_KEY="sk-ant-..."  # PowerShell
-```
+\`\`\`
 If no key is set, the system uses `MockDrafter` and a rule-based mock triage automatically — every feature still works.
 
 ### 2. Backend (Node + Express + SQLite)
 
-```bash
+\`\`\`bash
 cd backend
 npm install
-```
+\`\`\`
 
 ### 3. Frontend (React + TypeScript)
 
-```bash
+\`\`\`bash
 cd frontend
 npm install
-```
+\`\`\`
 
 ---
 
 ## Run
 
 **1. Run the Python pipeline** to ingest fixture comments and populate the queue:
-```bash
+\`\`\`bash
 python -m src.main
-```
+\`\`\`
 This runs triage, the safety gate, and drafting, then opens the CLI human review loop. Low-risk comments (triage=reply + safety=ok) are auto-approved and published without review.
 
 **2. Start the backend API:**
-```bash
+\`\`\`bash
 cd backend
 npx ts-node src/server.ts
-```
+\`\`\`
 Runs at `http://localhost:3001`. On first boot it creates `data.sqlite` and applies the schema automatically.
 
 **3. Start the frontend dashboard:**
-```bash
+\`\`\`bash
 cd frontend
 npm run dev
-```
+\`\`\`
 Open the printed local URL (e.g. `http://localhost:5173`) to approve, edit, or reject queued items through the web UI — the same queue the Python CLI populates.
 
 ---
